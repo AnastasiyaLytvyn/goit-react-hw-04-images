@@ -4,18 +4,24 @@ import { Modal } from './Modal/Modal';
 import { Container } from './App.styled';
 
 export class App extends Component {
-  state = { search: '' };
+  state = { search: '', showModal: false };
 
   handleSubmit = value => {
     this.setState({ search: value.search });
     console.log(value.search);
   };
 
+  toggleModal = () => {
+    this.setState(({ showModal }) => ({ showModal: !showModal }));
+  };
+
   render() {
+    const { showModal } = this.state;
+
     return (
       <Container>
         <Searchbar onSubmit={this.handleSubmit} />
-        <Modal/>
+        {showModal && <Modal onClose={this.toggleModal} />}
       </Container>
     );
   }
