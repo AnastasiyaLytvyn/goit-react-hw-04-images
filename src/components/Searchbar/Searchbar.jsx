@@ -1,18 +1,24 @@
 import React from 'react';
 import { Formik } from 'formik';
-import { Header, SearchForm, Button, Input, Label } from './Searchbar.styled';
+import { BsSearch } from 'react-icons/bs';
+import { Header, SearchForm, Button, Input } from './Searchbar.styled';
+
+const initialValues = {
+  search: '',
+};
 
 export const Searchbar = ({ onSubmit }) => {
   const handeSubmit = (values, { resetForm }) => {
+    console.log(values);
     onSubmit(values, resetForm);
   };
 
   return (
     <Header>
-      <Formik initialValues={{ search: '' }} onSubmit={handeSubmit}>
+      <Formik initialValues={initialValues} onSubmit={handeSubmit}>
         <SearchForm>
           <Button type="submit">
-            <Label>Search</Label>
+            <BsSearch size="24px" />
           </Button>
           <Input
             type="text"

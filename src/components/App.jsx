@@ -2,12 +2,16 @@ import React, { Component } from 'react';
 import { Searchbar } from './Searchbar/Searchbar';
 
 export class App extends Component {
-  state = {};
+  state = { search: '' };
+
+  handleSubmit = value => {
+    this.setState({ search: value.search });
+  };
 
   render() {
     return (
       <div>
-        <Searchbar />
+        <Searchbar onSubmit={this.handleSubmit} />
       </div>
     );
   }
