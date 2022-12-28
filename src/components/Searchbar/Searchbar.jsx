@@ -8,14 +8,15 @@ const initialValues = {
 };
 
 export const Searchbar = ({ onSubmit }) => {
-  const handeSubmit = (values, { resetForm }) => {
+  const handleSubmit = (values, actions) => {
     console.log(values);
-    onSubmit(values, resetForm);
+    onSubmit(values);
+    actions.resetForm();
   };
 
   return (
     <Header>
-      <Formik initialValues={initialValues} onSubmit={handeSubmit}>
+      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
         <SearchForm>
           <Button type="submit">
             <BsSearch size="24px" />
