@@ -4,7 +4,7 @@ import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Modal } from './Modal/Modal';
 import { Container } from './App.styled';
 
-import { fetchImages } from 'services/api';
+// import { fetchImages } from 'services/api';
 
 export class App extends Component {
   state = {
@@ -16,9 +16,9 @@ export class App extends Component {
     status: 'idle',
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    const { search, page } = this.state;
-  }
+  // componentDidUpdate(prevProps, prevState) {
+  //   const { search, page } = this.state;
+  // }
 
   handleSubmit = value => {
     this.setState({ search: value.search, images: [], page: 1 });
