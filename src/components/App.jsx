@@ -14,7 +14,7 @@ export class App extends Component {
     isLoading: false,
   };
 
-  async componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate(_, prevState) {
     const { search, page } = this.state;
 
     try {
@@ -27,7 +27,6 @@ export class App extends Component {
 
         this.setState(prevState => ({
           images: [...prevState.images, ...this.galleryItems(res.data.hits)],
-          status: 'loaded',
         }));
       }
     } catch (error) {
@@ -62,9 +61,10 @@ export class App extends Component {
         <Searchbar onSubmit={this.handleSubmit} />
         {images.length > 0 && <ImageGallery images={images}></ImageGallery>}
         {isLoading && <Loader />}
-        {images.length > 0 && <Button onClick={this.loadMore} />}
+        {images.length % 12 === 0 && images.length !== 0 && (
+          (<Button onClick={this.loadMore} />)
+        )}
       </Container>
     );
   }
-
 }
