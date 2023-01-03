@@ -11,14 +11,14 @@ export class App extends Component {
     search: '',
     images: [],
     page: 1,
-    isLoading: false,
+    status: 'idle',
   };
 
   async componentDidUpdate(prevProps, prevState) {
     const { search, page } = this.state;
 
     if (prevState.search !== search || prevState.page !== page) {
-      this.setState({ isLoading: true });
+      this.setState({ status: 'pending' });
 
       try {
         const res = await fetchImages(search, page);
@@ -31,7 +31,7 @@ export class App extends Component {
       } catch (error) {
         console.log(error);
       } finally {
-        this.setState({ isLoading: false });
+        this.setState({ status: 'resolved' });
       }
     }
   }
@@ -45,7 +45,12 @@ export class App extends Component {
   };
 
   handleSubmit = value => {
-    this.setState({ search: value.search, images: [], page: 1 });
+    this.setState({
+      search: value.search,
+      images: [],
+      page: 1,
+      status: 'idle',
+    });
     console.log(value.search);
   };
 
@@ -54,13 +59,13 @@ export class App extends Component {
   };
 
   render() {
-    const { images, isLoading } = this.state;
+    const { images, status } = this.state;
 
     return (
       <Container>
         <Searchbar onSubmit={this.handleSubmit} />
         {images.length > 0 && <ImageGallery images={images}></ImageGallery>}
-        {isLoading && <Loader />}
+        {status === 'pending' && <Loader />}
         {images.length % 12 === 0 && images.length !== 0 && (
           <Button onClick={this.loadMore} />
         )}
