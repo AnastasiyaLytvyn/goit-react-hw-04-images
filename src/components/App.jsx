@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
+import { Loader } from './Loader/Loader';
 import { Container } from './App.styled';
 import { fetchImages } from 'services/api';
 
@@ -10,7 +11,7 @@ export class App extends Component {
     search: '',
     images: [],
     page: 1,
-    status: 'start',
+    isLoading: false,
   };
 
   async componentDidUpdate(prevProps, prevState) {
@@ -18,7 +19,7 @@ export class App extends Component {
 
     try {
       if (prevState.search !== search || prevState.page !== page) {
-        this.setState({ status: 'loading' });
+        this.setState({ isLoading: true });
         const res = await fetchImages(search, page);
         if (res.data.total === 0) {
           throw new Error('Images not found');
@@ -32,7 +33,7 @@ export class App extends Component {
     } catch (error) {
       console.log(error);
     } finally {
-      this.setState({ status: 'start' });
+      this.setState({ isLoading: false });
     }
   }
 
@@ -54,19 +55,16 @@ export class App extends Component {
   };
 
   render() {
-    const { images } = this.state;
+    const { images, isLoading } = this.state;
 
     return (
       <Container>
         <Searchbar onSubmit={this.handleSubmit} />
-        {images.length > 0 && (
-          <ImageGallery
-            images={images}
-            onImageClick={this.handleModal}
-          ></ImageGallery>
-        )}
+        {images.length > 0 && <ImageGallery images={images}></ImageGallery>}
+        {isLoading && <Loader />}
         {images.length > 0 && <Button onClick={this.loadMore} />}
       </Container>
     );
   }
+
 }
