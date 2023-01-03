@@ -14,25 +14,25 @@ export class App extends Component {
     isLoading: false,
   };
 
-  async componentDidUpdate(_, prevState) {
+  async componentDidUpdate(prevProps, prevState) {
     const { search, page } = this.state;
 
-    try {
-      if (prevState.search !== search || prevState.page !== page) {
-        this.setState({ isLoading: true });
+    if (prevState.search !== search || prevState.page !== page) {
+      this.setState({ isLoading: true });
+
+      try {
         const res = await fetchImages(search, page);
         if (res.data.total === 0) {
           throw new Error('Images not found');
         }
-
         this.setState(prevState => ({
           images: [...prevState.images, ...this.galleryItems(res.data.hits)],
         }));
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.setState({ isLoading: false });
       }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      this.setState({ isLoading: false });
     }
   }
 
@@ -62,7 +62,7 @@ export class App extends Component {
         {images.length > 0 && <ImageGallery images={images}></ImageGallery>}
         {isLoading && <Loader />}
         {images.length % 12 === 0 && images.length !== 0 && (
-          (<Button onClick={this.loadMore} />)
+          <Button onClick={this.loadMore} />
         )}
       </Container>
     );
