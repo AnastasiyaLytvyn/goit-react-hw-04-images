@@ -75,7 +75,7 @@ export class App extends Component {
         {status === 'resolved' &&
           images.length !== 0 &&
           images.length % 12 === 0 && <Button onClick={this.loadMore} />}
-        <ToastContainer theme="colored" autoClose={1000} />
+        <ToastContainer theme="colored" autoClose={2000} />
       </Container>
     );
   }
