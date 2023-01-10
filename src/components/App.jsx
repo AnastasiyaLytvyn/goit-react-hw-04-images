@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Searchbar } from './Searchbar/Searchbar';
@@ -8,7 +9,32 @@ import { Loader } from './Loader/Loader';
 import { Container } from './App.styled';
 import { fetchImages } from 'services/api';
 
-export class App extends Component {
+export function App() {
+  const [search, setSearch] = useState('');
+  const [images, setImages] = useState([]);
+  const [page, setPage] = useState(1);
+  const [status, setStatus] = useState('idle');
+
+  console.log(search);
+  console.log(images);
+  console.log(page);
+  console.log(status);
+
+  const handleSubmit = value => {
+    setSearch(value.search);
+    setImages([]);
+    setPage(1);
+    setStatus('idle');
+  };
+  
+  return (
+    <Container>
+      <Searchbar onClick={handleSubmit}></Searchbar>
+    </Container>
+  );
+}
+
+export class App1 extends Component {
   state = {
     search: '',
     images: [],
