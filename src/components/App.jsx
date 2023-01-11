@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Searchbar } from './Searchbar/Searchbar';
@@ -15,39 +14,14 @@ export function App() {
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState('idle');
 
-  console.log(search);
-  console.log(images);
-  console.log(page);
-  console.log(status);
+  useEffect(() => {
+    if (!search) {
+      console.log('First render');
+      return;
+    }
 
-  const handleSubmit = value => {
-    setSearch(value.search);
-    setImages([]);
-    setPage(1);
-    setStatus('idle');
-  };
-  
-  return (
-    <Container>
-      <Searchbar onClick={handleSubmit}></Searchbar>
-    </Container>
-  );
-}
-
-export class App1 extends Component {
-  state = {
-    search: '',
-    images: [],
-    page: 1,
-    status: 'idle',
-  };
-
-  async componentDidUpdate(prevProps, prevState) {
-    const { search, page } = this.state;
-
-    if (prevState.search !== search || prevState.page !== page) {
-      this.setState({ status: 'pending' });
-
+    async function getData() {
+      setStatus('pending');
       try {
         const res = await fetchImages(search, page);
 
@@ -57,18 +31,17 @@ export class App1 extends Component {
         if (page === 1) {
           toast.success(`Hooray! We found ${res.data.totalHits} images.`);
         }
-        this.setState(prevState => ({
-          images: [...prevState.images, ...this.galleryItems(res.data.hits)],
-        }));
+        setImages(prevState => [...prevState, ...galleryItems(res.data.hits)]);
       } catch (error) {
         console.log(error);
       } finally {
-        this.setState({ status: 'resolved' });
+        setStatus('resolved');
       }
     }
-  }
+    getData();
+  }, [search, page]);
 
-  galleryItems = data => {
+  const galleryItems = data => {
     return data.map(element => ({
       id: element.id,
       webformatURL: element.webformatURL,
@@ -76,33 +49,26 @@ export class App1 extends Component {
     }));
   };
 
-  handleSubmit = value => {
-    this.setState({
-      search: value.search,
-      images: [],
-      page: 1,
-      status: 'idle',
-    });
-    console.log(value.search);
+  const handleSubmit = value => {
+    setSearch(value.search);
+    setImages([]);
+    setPage(1);
+    setStatus('idle');
   };
 
-  loadMore = () => {
-    this.setState(prevState => ({ page: prevState.page + 1 }));
+  const loadMore = () => {
+    setPage(prevState => prevState + 1);
   };
 
-  render() {
-    const { images, status } = this.state;
-
-    return (
-      <Container>
-        <Searchbar onSubmit={this.handleSubmit} />
-        {images.length > 0 && <ImageGallery images={images}></ImageGallery>}
-        {status === 'pending' && <Loader />}
-        {status === 'resolved' &&
-          images.length !== 0 &&
-          images.length % 12 === 0 && <Button onClick={this.loadMore} />}
-        <ToastContainer theme="colored" autoClose={2000} />
-      </Container>
-    );
-  }
+  return (
+    <Container>
+      <Searchbar onSubmit={handleSubmit}></Searchbar>
+      {images.length > 0 && <ImageGallery images={images}></ImageGallery>}
+      {status === 'pending' && <Loader />}
+      {status === 'resolved' &&
+        images.length !== 0 &&
+        images.length % 12 === 0 && <Button onClick={loadMore} />}
+      <ToastContainer theme="colored" autoClose={2000} />
+    </Container>
+  );
 }
